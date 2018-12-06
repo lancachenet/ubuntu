@@ -11,10 +11,14 @@ workflows:
              branches:
                only: 
                  - master
-  weekly:
+      - build_children:
+          context: circle-api
+          requires:
+            - publish_latest
+  monthly:
     triggers:
       - schedule:
-          cron: "0 0 * * 0"
+          cron: "0 0 1 * *"
           filters:
             branches:
               only:
@@ -29,6 +33,10 @@ workflows:
              branches:
                only: 
                  - master
+      - build_children:
+          context: circle-api
+          requires:
+            - publish_latest
 
 version: 2
 jobs:
@@ -88,4 +96,14 @@ jobs:
             docker load -i /tmp/workspace/steamcache-ubuntu.tar
             docker tag steamcache/ubuntu:goss-test steamcache/ubuntu:latest
             docker push steamcache/ubuntu:latest
-
+  build_children:
+    docker:
+      - image: circleci/python:2-jessie
+    steps:
+      - run:
+          name: "Request API to build children"
+          command: |
+              for child in "ubuntu-nginx"; do
+                 echo "Asking API to trigger build for $child"
+                 curl -X POST --header "Content-Type: application/json" -d '{"branch":"master"}' https://circleci.com/api/v1.1/project/github/steamcache/$child/build?circle-token=${CIRCLE_API_USER_TOKEN}
+              done
