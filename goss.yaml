@@ -1,0 +1,12 @@
+package:
+  bzip2:
+    installed: true
+  curl:
+    installed: true
+  supervisor:
+    installed: true
+  wget:
+    installed: true
+process:
+  supervisord:
+    running: true
