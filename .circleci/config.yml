@@ -3,6 +3,30 @@ workflows:
   build_test_deploy:
     jobs:
       - test
+      - publish_latest:
+          requires:
+            - test
+          filters:
+             branches:
+               only: 
+                 - master
+  weekly:
+    triggers:
+      - schedule:
+          cron: "0 0 * * 0"
+          filters:
+            branches:
+              only:
+                - master
+    jobs:
+      - test
+      - publish_latest:
+          requires:
+            - test
+          filters:
+             branches:
+               only: 
+                 - master
 
 version: 2
 jobs:
@@ -37,3 +61,15 @@ jobs:
       - store_artifacts:
           path: reports
           destination: reports
+  publish_latest:
+    docker:
+      - image: circleci/python:2-jessie
+    steps:
+      - checkout
+      - setup_remote_docker:   # (2)
+          docker_layer_caching: true # (3)
+      - run: |
+          docker login -u $DOCKER_USER -p $DOCKER_PASS
+          docker build -t steamcache/ubuntu:latest .
+          docker push steamcache/ubuntu:latest
+
