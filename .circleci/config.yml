@@ -57,7 +57,16 @@ jobs:
             # Important, change from mount to work on remote docker, see https://github.com/aelsabbahy/goss/pull/271
             # If using machine image you do not need this.
             export GOSS_FILES_STRATEGY=cp
-            ./run-tests.sh circleci
+            ./run-tests.sh circleci keepimage
+      - run:
+          name: Save docker image
+          command: |
+            mkdir -p workspace
+            docker save -o workspace/steamcache-ubuntu.tar steamcache/ubuntu:goss-test
+      - persist_to_workspace:
+          root: workspace
+          paths:
+            steamcache-ubuntu.tar
       - store_test_results:
           path: reports
       - store_artifacts:
@@ -67,13 +76,16 @@ jobs:
     docker:
       - image: circleci/python:2-jessie
     steps:
-      - checkout
       - setup_remote_docker:   # (2)
           docker_layer_caching: true # (3)
+      - attach_workspace:
+          at: /tmp/workspace
       - run:
           name: "Deploy latest to docker hub"
           command: |
             docker login -u $DOCKER_USER -p $DOCKER_PASS
-            docker build -t steamcache/ubuntu:latest .
+            #docker build -t steamcache/ubuntu:latest .
+            docker load -i /tmp/workspace/steamcache-ubuntu.tar
+            docker tag steamcache/ubuntu:goss-test steamcache/ubuntu:latest
             docker push steamcache/ubuntu:latest
 
