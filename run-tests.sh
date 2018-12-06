@@ -8,6 +8,25 @@ if [ $? -ne 0 ]; then
 	exit $?
 fi
 
-docker build --tag steamcache/ubuntu:testing .
-dgoss run $@ steamcache/ubuntu:testing
-docker rmi steamcache/ubuntu:testing
+docker build --tag steamcache/ubuntu:goss-test .
+case $1 in
+  circleci)
+    shift;
+    mkdir -p ./reports/goss
+    export GOSS_OPTS="$GOSS_OPTS --format junit"
+	dgoss run $@ steamcache/ubuntu:goss-test > reports/goss/report.xml
+	#store result for exit code
+	RESULT=$?
+	#delete the junk that goss currently outputs :(
+    sed -i '0,/^</d' reports/goss/report.xml
+	#remove invalid system-err outputs from junit output so circleci can read it
+	sed -i '/<system-err>.*<\/system-err>/d' reports/goss/report.xml
+    ;;
+  *)
+	dgoss run $@ steamcache/ubuntu:goss-test
+	RESULT=$?
+    ;;
+esac
+docker rmi steamcache/ubuntu:goss-test
+
+exit $RESULT
