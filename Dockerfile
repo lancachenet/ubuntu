@@ -3,7 +3,7 @@ MAINTAINER SteamCache.Net Team <team@steamcache.net>
 ARG DEBIAN_FRONTEND=noninteractive
 RUN \
   apt-get -y update && apt-get -y upgrade && \
-  apt-get -y install supervisor curl wget bzip2 locales && \
+  apt-get -y install supervisor curl wget bzip2 locales tzdata && \
   locale-gen en_GB.utf8 && \
   update-locale LANG=en_GB.utf8 && \
   mkdir --mode 777 -p /var/log/supervisor && \
