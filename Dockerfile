@@ -1,5 +1,5 @@
 FROM ubuntu:bionic
-MAINTAINER SteamCache.Net Team <team@steamcache.net>
+MAINTAINER LanCache.Net Team <team@lancache.net>
 ARG DEBIAN_FRONTEND=noninteractive
 RUN \
   apt-get -y update && apt-get -y upgrade && \
