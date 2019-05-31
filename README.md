@@ -27,12 +27,12 @@ You can easily extend the behavour of this image in the following ways
 
 This docker image is not designed for use by anyone outside of the steamcache organisation, you're welcome to try, but support will be limited: HERE BE DRAGONS
 
-1. Make a Dockerfile and specify `steamcache/ubuntu` on the `FROM` line.
+1. Make a Dockerfile and specify `lancachenet/ubuntu` on the `FROM` line.
 2. Anything you want run in the container should be started by supervisord.
 3. Use a directory called overlay if you need to copy files in to your new image (see Dockerfile for this image as an example).
 
 ## Building and testing
 
-To build just run `docker build --tag steamcache/ubuntu:testing .`.
+To build just run `docker build --tag lancachenet/ubuntu:testing .`.
 To test you can run `./run_tests.sh`
 
