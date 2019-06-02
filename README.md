@@ -36,3 +36,17 @@ This docker image is not designed for use by anyone outside of the steamcache or
 To build just run `docker build --tag lancachenet/ubuntu:testing .`.
 To test you can run `./run_tests.sh`
 
+## Changing container timezone
+
+If you need to change the timezone that the container uses, it is defined by the `TZ` environment variable. The default is `Europe/London`.
+
+```
+ TZ=Europe/London
+```
+
+You can override this by using the `-e` argument to docker run and specifying your [timezone](https://en.wikipedia.org/wiki/List_of_tz_database_time_zones).
+
+```
+-e TZ="Australia/Melbourne"
+```
+
