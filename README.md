@@ -47,6 +47,6 @@ If you need to change the timezone that the container uses, it is defined by the
 You can override this by using the `-e` argument to docker run and specifying your [timezone](https://en.wikipedia.org/wiki/List_of_tz_database_time_zones).
 
 ```
--e TZ="Europe/London"
+-e TZ="Australia/Melbourne"
 ```
 
