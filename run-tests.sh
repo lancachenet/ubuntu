@@ -9,15 +9,17 @@ if [ $? -ne 0 ]; then
 fi
 
 docker build --tag lancachenet/ubuntu:goss-test .
+
 case $1 in
   circleci)
-    shift;
-    mkdir -p ./reports/goss
+	shift;
+	mkdir -p ./reports/goss
 	if [[ "$1" == "keepimage" ]]; then
 		KEEPIMAGE=true
 		shift
 	fi
-    export GOSS_OPTS="$GOSS_OPTS --format junit"
+	export GOSS_OPTS="$GOSS_OPTS --format junit"
+	export CONTAINER_LOG_OUTPUT="reports/goss/docker.log"
 	dgoss run $@ lancachenet/ubuntu:goss-test > reports/goss/report.xml
 	#store result for exit code
 	RESULT=$?
