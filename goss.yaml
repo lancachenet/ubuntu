@@ -3,7 +3,7 @@ package:
     installed: true
   curl:
     installed: true
-  supervisor:
+  python-pip:
     installed: true
   wget:
     installed: true
