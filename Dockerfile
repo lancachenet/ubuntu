@@ -17,7 +17,8 @@ ENV \
   LC_ALL=en_GB.UTF-8 \
   LANG=en_GB.UTF-8 \
   LANGUAGE=en_GB.UTF-8 \
-  TZ=Europe/London
+  TZ=Europe/London \
+  SUPERVISORD_LOGLEVEL=WARN
 COPY overlay/ /
 RUN chmod -R 755 /init /hooks
 ENTRYPOINT ["/bin/bash", "-e", "/init/entrypoint"]

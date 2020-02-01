@@ -10,6 +10,7 @@ fi
 
 docker build --tag lancachenet/ubuntu:goss-test .
 
+
 case $1 in
   circleci)
 	shift;
@@ -20,7 +21,11 @@ case $1 in
 	fi
 	export GOSS_OPTS="$GOSS_OPTS --format junit"
 	export CONTAINER_LOG_OUTPUT="reports/goss/docker.log"
-	dgoss run $@ lancachenet/ubuntu:goss-test > reports/goss/report.xml
+	dgoss run -e SUPERVISORD_LOGLEVEL=INFO $@ lancachenet/ubuntu:goss-test > reports/goss/report.xml
+	echo \
+"Container Output: 
+$(cat reports/goss/docker.log)" \
+	> reports/goss/docker.log
 	#store result for exit code
 	RESULT=$?
 	#delete the junk that goss currently outputs :(
@@ -33,7 +38,19 @@ case $1 in
 		KEEPIMAGE=true
 		shift
 	fi
-	dgoss run $@ lancachenet/ubuntu:goss-test
+	echo $1
+	if [[ "$1" == "showlog" ]]; then
+		echo "Enabling showlog"
+		SHOWLOG=true
+		shift
+		export CONTAINER_LOG_OUTPUT="docker.log"
+	fi
+	dgoss run -e SUPERVISORD_LOGLEVEL=INFO $@ lancachenet/ubuntu:goss-test
+	if [[ "$SHOWLOG" ==  "true" ]]; then
+		echo "Contianer Output:"
+		cat "docker.log"
+		rm "docker.log"
+	fi
 	RESULT=$?
     ;;
 esac
