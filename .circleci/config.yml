@@ -76,10 +76,13 @@ jobs:
           paths:
             lancachenet-ubuntu.tar
       - store_test_results:
-          path: reports
+          path: reports/goss/report.xml
       - store_artifacts:
           path: reports
           destination: reports
+      - store_artifacts:
+          path: workspace/lancachenet-ubuntu.tar
+          destination: docker-lancachenet-ubuntu.tar
   publish_latest:
     docker:
       - image: circleci/python:2-jessie
