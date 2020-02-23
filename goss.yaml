@@ -3,7 +3,7 @@ package:
     installed: true
   curl:
     installed: true
-  python-pip:
+  python3-pip:
     installed: true
   wget:
     installed: true
