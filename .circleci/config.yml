@@ -100,7 +100,7 @@ jobs:
       - run:
           name: "Request API to build children"
           command: |
-              for child in "ubuntu-nginx"; do
+              for child in {"ubuntu-nginx","lancache-dns"}; do
                  echo "Asking API to trigger build for $child"
                  curl -X POST --header "Content-Type: application/json" -d '{"branch":"master"}' https://circleci.com/api/v1.1/project/github/lancachenet/$child/build?circle-token=${CIRCLE_API_USER_TOKEN}
               done
