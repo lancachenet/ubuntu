@@ -78,12 +78,19 @@ jobs:
       - store_artifacts:
           path: workspace/lancachenet-ubuntu.tar
           destination: docker-lancachenet-ubuntu.tar
+      - persist_to_workspace:
+          root: workspace
+          paths:
+            lancachenet-ubuntu.tar
   publish_latest:
     executor: testbuild-executor
     steps:
+      - attach_workspace:
+          at: /tmp/workspace
       - run:
           name: "Deploy latest to docker hub"
           command: |
+            docker load -i /tmp/workspace/lancachenet-ubuntu.tar
             docker login -u $DOCKER_USER -p $DOCKER_PASS
             docker tag lancachenet/ubuntu:goss-test lancachenet/ubuntu:latest
             docker push lancachenet/ubuntu:latest
