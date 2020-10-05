@@ -6,7 +6,7 @@ ENV  \
   LC_ALL=en_GB.UTF-8 \
   LANG=en_GB.UTF-8 \
   LANGUAGE=en_GB.UTF-8 \
-  TZ=Europe/London \
+  TZ=Europe/London
 
 ADD ["https://github.com/just-containers/s6-overlay/releases/download/v1.17.2.0/s6-overlay-amd64.tar.gz", "/tmp"]
 
@@ -25,17 +25,16 @@ RUN \
   tzdata \
   && \
 # Add user
-  useradd -U -d ${HOME} -s /bin/bash abc && \
+  useradd -u 911 -U -d /data -s /bin/false abc && \
   usermod -G users abc && \
 # Timezone
-locale-gen en_GB.utf8 && \
-update-locale LANG=en_GB.utf8 && \
+  locale-gen en_GB.utf8 && \
+  update-locale LANG=en_GB.utf8 && \
 # Cleanup
   apt-get -y autoremove && \
   apt-get -y clean && \
   rm -rf /var/lib/apt/lists/* && \
   rm -rf /tmp/* && \
   rm -rf var/tmp/*
-
 
 COPY overlay/ /
