@@ -30,6 +30,8 @@ RUN \
 # Timezone
   locale-gen en_GB.utf8 && \
   update-locale LANG=en_GB.utf8 && \
+# Create directories
+  mkdir /data && \
 # Cleanup
   apt-get -y autoremove && \
   apt-get -y clean && \
