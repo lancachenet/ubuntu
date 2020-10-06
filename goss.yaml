@@ -3,10 +3,8 @@ package:
     installed: true
   curl:
     installed: true
-  python3-pip:
-    installed: true
   wget:
     installed: true
 process:
-  supervisord:
+  s6-svscan:
     running: true
