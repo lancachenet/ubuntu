@@ -2,11 +2,6 @@ FROM ubuntu:bionic
 LABEL maintainer="LanCache.Net Team <team@lancache.net>"
 
 ARG DEBIAN_FRONTEND=noninteractive
-ENV  \
-  LC_ALL=en_GB.UTF-8 \
-  LANG=en_GB.UTF-8 \
-  LANGUAGE=en_GB.UTF-8 \
-  TZ=Europe/London
 
 ADD ["https://github.com/just-containers/s6-overlay/releases/download/v1.17.2.0/s6-overlay-amd64.tar.gz", "/tmp"]
 
@@ -38,5 +33,11 @@ RUN \
   rm -rf /var/lib/apt/lists/* && \
   rm -rf /tmp/* && \
   rm -rf var/tmp/*
+
+ENV  \
+  LC_ALL=en_GB.UTF-8 \
+  LANG=en_GB.UTF-8 \
+  LANGUAGE=en_GB.UTF-8 \
+  TZ=Europe/London
 
 COPY overlay/ /
