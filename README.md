@@ -8,20 +8,17 @@ It is currently based on 18.04 LTS (Bionic Beaver)
 
 You can easily extend the behavour of this image in the following ways
 
-* `/hooks/entrypoint-pre.d/`
-  Executables placed in this directory are executed very early on, before anything else is done.
+* `/etc/fix-attrs.d`
+  Fix ownership and permissions before anything else is executes. These files require a specific format detailed [here](https://github.com/just-containers/s6-overlay#fixing-ownership--permissions).
 
-* `/hooks/entrypoint-run`
-  If it exists, this is executed if the default command is not overridden. After it's execution completes the default command is executed.
+* `/etc/cont-init.d`
+  Executables in this folder are run prior to any services being started.
 
-* `/hooks/entrypoint-exec`
-  If it exists, this is executed if default command is overridden. After it's execution completes the default command is executed.
+* `/etc/services.d`
+  Services are defined in this directory. A service is defined by creating a directory with the service name with a run file in it.
 
-* `/hooks/supervisord-pre.d/`
-  Executables placed in this directory are executed just before supervisord is executed.
-
-* `/hooks/supervisord-ready`
-  If it exists, this is executed once supervisord is read. This is triggered from supervisord itself, when it fires the SUPERVISOR_STATE_CHANGE_RUNNING event.
+* `/etc/cont-finish.d`
+  Executables placed in this directory are executed after a service has died.
 
 ## Usage
 
