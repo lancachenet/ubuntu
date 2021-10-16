@@ -6,5 +6,5 @@ package:
   wget:
     installed: true
 process:
-  supervisord:
+  s6-svscan:
     running: true
