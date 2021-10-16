@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/with-contenv bash
 cat <<'EOF'
   _                  _____           _                       _
  | |                / ____|         | |                     | |
