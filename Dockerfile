@@ -3,9 +3,11 @@ MAINTAINER LanCache.Net Team <team@lancache.net>
 ARG DEBIAN_FRONTEND=noninteractive
 RUN \
   apt-get -y update && apt-get -y upgrade && \
-  apt-get -y install python3-pip curl wget bzip2 locales tzdata && \
+  apt-get -y install python3-pip curl wget bzip2 locales tzdata --no-install-recommends && \
   locale-gen en_GB.utf8 && \
-  update-locale LANG=en_GB.utf8
+  update-locale LANG=en_GB.utf8 && \
+  apt-get -y clean && \
+  rm -rf /var/lib/apt/lists/*
 RUN \
   pip3 install supervisor && \
   mkdir --mode 777 -p /var/log/supervisor
