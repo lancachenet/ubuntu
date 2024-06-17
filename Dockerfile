@@ -12,9 +12,6 @@ RUN \
 RUN \
     pip3 install supervisor --break-system-packages && \
     mkdir --mode 777 -p /var/log/supervisor
-RUN \
-    apt-get -y clean && \
-    rm -rf /var/lib/apt/lists/*
 
 ENV \
     SUPERVISORD_EXIT_ON_FATAL=1 \
