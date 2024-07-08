@@ -3,8 +3,6 @@ package:
     installed: true
   curl:
     installed: true
-  python3-pip:
-    installed: true
   wget:
     installed: true
 process:

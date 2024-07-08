@@ -28,4 +28,4 @@ fi
 
 echo "Starting Supervisord"
 
-exec /usr/local/bin/supervisord -n -c /etc/supervisor/supervisord.conf -e ${SUPERVISORD_LOGLEVEL:-error}
+exec /usr/bin/supervisord -n -c /etc/supervisor/supervisord.conf -e ${SUPERVISORD_LOGLEVEL:-error}
