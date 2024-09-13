@@ -2,7 +2,7 @@
 
 This image provides a standard ubuntu docker base image for other docker images to build on top of.
 
-It is currently based on 18.04 LTS (Bionic Beaver)
+It is currently based on 24.04 LTS
 
 ## Extending this image
 
@@ -25,7 +25,7 @@ You can easily extend the behavour of this image in the following ways
 
 ## Usage
 
-This docker image is not designed for use by anyone outside of the steamcache organisation, you're welcome to try, but support will be limited: HERE BE DRAGONS
+This docker image is not designed for use by anyone outside of the Lancache organisation, you're welcome to try, but support will be limited: HERE BE DRAGONS
 
 1. Make a Dockerfile and specify `lancachenet/ubuntu` on the `FROM` line.
 2. Anything you want run in the container should be started by supervisord.
