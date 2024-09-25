@@ -1,6 +1,4 @@
 package:
-  bzip2:
-    installed: true
   curl:
     installed: true
   wget:
