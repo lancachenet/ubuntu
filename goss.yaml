@@ -3,6 +3,8 @@ package:
     installed: true
   curl:
     installed: true
+  git:
+    installed: true
   wget:
     installed: true
 process:
