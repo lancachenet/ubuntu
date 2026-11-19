@@ -11,7 +11,7 @@ die() {
 # This is the same logic as the parent docker container, but rather this,
 # than creating a one-time process in supervisord to handle this logic.
 PID=
-trap '[[ ${PID} ]] && kill ${PID}; exit 0' SIGTERM
+trap 'if [[ ${PID} ]]; then kill ${PID}; else exit 0; fi' SIGTERM SIGINT
 
 supervisord_pre=$(find /hooks/supervisord-pre.d/ -maxdepth 1 -type f ! -name .gitkeep 2>/dev/null | sort -n)
 if [ "$supervisord_pre" != "" ]; then
@@ -28,4 +28,15 @@ fi
 
 echo "Starting Supervisord"
 
-exec /usr/bin/supervisord -n -c /etc/supervisor/supervisord.conf -e "${SUPERVISORD_LOGLEVEL:-error}"
+rm -f /run/supervisord.fatal
+/usr/bin/supervisord -n -c /etc/supervisor/supervisord.conf -e "${SUPERVISORD_LOGLEVEL:-error}" &
+PID=$!
+wait ${PID}
+rc=$?
+# a trapped signal interrupts wait; keep waiting until supervisord has really exited
+while kill -0 ${PID} 2>/dev/null; do
+	wait ${PID}
+	rc=$?
+done
+[[ -f /run/supervisord.fatal ]] && exit 1
+exit ${rc}
