@@ -1,4 +1,4 @@
-FROM ubuntu:24.04
+FROM ubuntu:26.04
 
 LABEL org.opencontainers.image.authors="LanCache.Net Team <team@lancache.net>"
 
@@ -8,7 +8,7 @@ ARG DEBIAN_FRONTEND=noninteractive
 RUN <<EOF
   apt-get -y update
   apt-get -y upgrade
-  apt-get -y install supervisor curl wget bzip2 locales tzdata --no-install-recommends
+  apt-get -y install supervisor curl wget bzip2 locales tzdata git ca-certificates --no-install-recommends
   locale-gen en_GB.utf8
   update-locale LANG=en_GB.utf8
   apt-get -y clean
