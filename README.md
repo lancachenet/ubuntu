@@ -19,6 +19,15 @@ Services are defined as [s6-rc](https://skarnet.org/software/s6-rc/) source defi
 * `/etc/s6-overlay/s6-rc.d/<name>/finish`
   Optional. Runs when a longrun exits. To stop the container when the service dies, call `/run/s6/basedir/bin/halt`; the exit code written to `/run/s6-linux-init-container-results/exitcode` becomes the container's exit code.
 
+s6 restarts a longrun every time it exits, so a service that can never start would leave the container running but broken. To stop the container with exit code 1 instead, use this as the service's `finish` script:
+
+```sh
+#!/bin/sh
+exec /etc/s6-overlay/scripts/exit-on-fatal "$@"
+```
+
+It treats the service as failed after it exits within 1 second of starting 4 times in a row, matching supervisord's `FATAL` state. A service that ran normally before exiting is just restarted, and `docker stop` is not treated as a failure. This is on by default (`EXIT_ON_FATAL=1`); set `EXIT_ON_FATAL=0` to keep restarting the service instead.
+
 The ASCII logo in `overlay/etc/s6-overlay/s6-rc.d/asciilogo/` is a minimal oneshot example. `S6_BEHAVIOUR_IF_STAGE2_FAILS=2` is set, so the container stops if a oneshot fails during startup. See the [s6-overlay documentation](https://github.com/just-containers/s6-overlay#usage) for the full set of options.
 
 ## Usage
