@@ -19,6 +19,7 @@ COPY --link overlay/ /
 
 # hadolint ignore=DL3008
 RUN <<EOF
+  set -e
   apt-get -y update
   apt-get -y upgrade
   apt-get -y install ca-certificates curl git locales tzdata wget xz-utils --no-install-recommends
