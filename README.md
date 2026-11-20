@@ -23,7 +23,7 @@ s6 restarts a longrun every time it exits, so a service that can never start wou
 
 ```sh
 #!/bin/sh
-exec /etc/s6-overlay/scripts/exit-on-fatal "$@"
+exec /etc/s6-overlay/scripts/exit-on-fatal.sh "$@"
 ```
 
 It treats the service as failed after it exits within 1 second of starting 4 times in a row, matching supervisord's `FATAL` state. A service that ran normally before exiting is just restarted, and `docker stop` is not treated as a failure. This is on by default (`EXIT_ON_FATAL=1`); set `EXIT_ON_FATAL=0` to keep restarting the service instead.

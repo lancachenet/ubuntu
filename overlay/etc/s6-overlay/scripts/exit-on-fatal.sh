@@ -1,9 +1,10 @@
 #!/command/with-contenv bash
+# shellcheck shell=bash
 # Stop the container when a longrun keeps failing to start, like supervisord's
 # FATAL state (startsecs=1, startretries=3). Call it from the service's finish:
 #
 #   #!/bin/sh
-#   exec /etc/s6-overlay/scripts/exit-on-fatal "$@"
+#   exec /etc/s6-overlay/scripts/exit-on-fatal.sh "$@"
 #
 # Uptime is measured from when the service was last marked up or ready. On a
 # restart that includes the 1s s6-supervise waits before respawning a service

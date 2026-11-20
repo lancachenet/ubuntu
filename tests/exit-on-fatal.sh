@@ -10,7 +10,7 @@ service() {
 	touch "${CONF}/$1/dependencies.d/base" "${CONF}/$1.bundle"
 	echo longrun >"${CONF}/$1/type"
 	printf '#!/bin/bash\n%s\n' "$2" >"${CONF}/$1/run"
-	printf '#!/bin/sh\nexec /etc/s6-overlay/scripts/exit-on-fatal "$@"\n' >"${CONF}/$1/finish"
+	printf '#!/bin/sh\nexec /etc/s6-overlay/scripts/exit-on-fatal.sh "$@"\n' >"${CONF}/$1/finish"
 	chmod +x "${CONF}/$1/run" "${CONF}/$1/finish"
 }
 service bad 'exec /nonexistent'

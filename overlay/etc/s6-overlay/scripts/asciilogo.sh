@@ -1,4 +1,5 @@
 #!/command/with-contenv bash
+# shellcheck shell=bash
 cat <<'EOF'
   _                  _____           _                       _
  | |                / ____|         | |                     | |
