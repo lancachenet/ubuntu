@@ -5,7 +5,7 @@ LABEL org.opencontainers.image.authors="LanCache.Net Team <team@lancache.net>"
 ARG DEBIAN_FRONTEND=noninteractive
 ARG ARCH="amd64"
 ARG ARCH_ALT="x86_64"
-ARG OVERLAY_VERSION="3.2.0.0"
+ARG OVERLAY_VERSION="3.2.3.2"
 
 ENV \
   S6_BEHAVIOUR_IF_STAGE2_FAILS=2 \
