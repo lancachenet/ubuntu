@@ -3,27 +3,35 @@ FROM ubuntu:26.04
 LABEL org.opencontainers.image.authors="LanCache.Net Team <team@lancache.net>"
 
 ARG DEBIAN_FRONTEND=noninteractive
-
-# hadolint ignore=DL3008
-RUN <<EOF
-  apt-get -y update
-  apt-get -y upgrade
-  apt-get -y install supervisor curl wget bzip2 locales tzdata git ca-certificates --no-install-recommends
-  locale-gen en_GB.utf8
-  update-locale LANG=en_GB.utf8
-  apt-get -y clean
-  rm -rf /var/lib/apt/lists/*
-EOF
+ARG ARCH="amd64"
+ARG ARCH_ALT="x86_64"
+ARG OVERLAY_VERSION="3.2.3.2"
 
 ENV \
-  SUPERVISORD_EXIT_ON_FATAL=1 \
+  S6_BEHAVIOUR_IF_STAGE2_FAILS=2 \
+  S6_VERBOSITY=1 \
+  EXIT_ON_FATAL=1 \
   LC_ALL=en_GB.UTF-8 \
   LANG=en_GB.UTF-8 \
   LANGUAGE=en_GB.UTF-8 \
-  TZ=Europe/London \
-  SUPERVISORD_LOGLEVEL=WARN
+  TZ=Europe/London
 
 COPY --link overlay/ /
 
-ENTRYPOINT ["/bin/bash", "-e", "/init/entrypoint.sh"]
-CMD ["/init/supervisord.sh"]
+# hadolint ignore=DL3008
+RUN <<EOF
+  set -e
+  apt-get -y update
+  apt-get -y upgrade
+  apt-get -y install ca-certificates curl git locales tzdata wget xz-utils --no-install-recommends
+  locale-gen en_GB.utf8
+  update-locale LANG=en_GB.utf8
+  curl -sSfL -o /tmp/s6-overlay-noarch.tar.xz "https://github.com/just-containers/s6-overlay/releases/download/v${OVERLAY_VERSION}/s6-overlay-noarch.tar.xz"
+  curl -sSfL -o /tmp/s6-overlay.tar.xz "https://github.com/just-containers/s6-overlay/releases/download/v${OVERLAY_VERSION}/s6-overlay-${ARCH_ALT}.tar.xz"
+  tar -C / -Jpxf /tmp/s6-overlay-noarch.tar.xz
+  tar -C / -Jpxf /tmp/s6-overlay.tar.xz
+  apt-get -y clean
+  rm -rf /tmp/* /var/lib/apt/lists/*
+EOF
+
+ENTRYPOINT ["/init"]
