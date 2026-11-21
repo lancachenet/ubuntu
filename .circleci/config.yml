@@ -1,8 +1,12 @@
+version: 2.1
+
 workflows:
-  version: 2.1
   build_test_deploy:
     jobs:
-      - test
+      - test:
+          matrix:
+            parameters:
+              arch: [amd64, arm64]
       - publish_latest:
           context: docker-hub
           requires:
@@ -24,7 +28,10 @@ workflows:
               only:
                 - master
     jobs:
-      - test
+      - test:
+          matrix:
+            parameters:
+              arch: [amd64, arm64]
       - publish_latest:
           context: docker-hub
           requires:
@@ -38,14 +45,23 @@ workflows:
           requires:
             - publish_latest
 
-version: 2.1
 executors:
-  testbuild-executor:
+  machine-amd64:
     machine:
       image: default
+    resource_class: medium
+  machine-arm64:
+    machine:
+      image: default
+    resource_class: arm.medium
+
 jobs:
   test:
-    executor: testbuild-executor
+    parameters:
+      arch:
+        type: enum
+        enum: [amd64, arm64]
+    executor: machine-<< parameters.arch >>
     steps:
       - checkout
       - run:
@@ -60,46 +76,54 @@ jobs:
       - run:
           name: Test
           command: |
-            # Don't forget path!
             export PATH=$PATH:~/bin
             ./run-tests.sh --circleci --keepimage
+      - run:
+          name: Check image architecture
+          command: |
+            arch=$(docker image inspect -f '{{.Architecture}}' lancachenet/ubuntu:goss-test)
+            echo "Built for ${arch}"
+            [ "${arch}" == "<< parameters.arch >>" ]
       - run:
           name: Save docker image
           command: |
             [ -d workspace ] || mkdir workspace
-            docker save -o workspace/lancachenet-ubuntu.tar lancachenet/ubuntu:goss-test
-            #Download from Artifacts and Load this into your own docker using the following command
-            #docker load -i /tmp/workspace/lancachenet-ubuntu.tar
+            docker tag lancachenet/ubuntu:goss-test lancachenet/ubuntu:goss-test-<< parameters.arch >>
+            docker save -o workspace/lancachenet-ubuntu-<< parameters.arch >>.tar lancachenet/ubuntu:goss-test-<< parameters.arch >>
       - store_test_results:
           path: reports/goss/report.xml
       - store_artifacts:
           path: reports
-          destination: reports
+          destination: reports-<< parameters.arch >>
       - store_artifacts:
-          path: workspace/lancachenet-ubuntu.tar
-          destination: docker-lancachenet-ubuntu.tar
+          path: workspace/lancachenet-ubuntu-<< parameters.arch >>.tar
+          destination: docker-lancachenet-ubuntu-<< parameters.arch >>.tar
       - persist_to_workspace:
           root: workspace
-          paths: lancachenet-ubuntu.tar
+          paths:
+            - lancachenet-ubuntu-<< parameters.arch >>.tar
   publish_latest:
-    executor: testbuild-executor
+    executor: machine-amd64
     steps:
       - attach_workspace:
           at: /tmp/workspace
       - run:
           name: "Deploy latest to docker hub"
           command: |
-            docker load -i /tmp/workspace/lancachenet-ubuntu.tar
-            docker login -u $DOCKER_USER -p $DOCKER_PASS
-            docker tag lancachenet/ubuntu:goss-test lancachenet/ubuntu:latest
-            docker push lancachenet/ubuntu:latest
+            echo "$DOCKER_PASS" | docker login -u "$DOCKER_USER" --password-stdin
+            for arch in amd64 arm64; do
+              docker load -i /tmp/workspace/lancachenet-ubuntu-${arch}.tar
+              docker tag lancachenet/ubuntu:goss-test-${arch} lancachenet/ubuntu:latest-${arch}
+              docker push lancachenet/ubuntu:latest-${arch}
+            done
+            docker buildx imagetools create -t lancachenet/ubuntu:latest lancachenet/ubuntu:latest-amd64 lancachenet/ubuntu:latest-arm64
   build_children:
-    executor: testbuild-executor
+    executor: machine-amd64
     steps:
       - run:
           name: "Request API to build children"
           command: |
-            for child in {"ubuntu-nginx","lancache-dns"}; do
+            for child in "ubuntu-nginx" "lancache-dns"; do
               echo "Asking API to trigger build for $child"
               curl -X POST --header "Content-Type: application/json" -d '{"branch":"master"}' https://circleci.com/api/v1.1/project/github/lancachenet/$child/build?circle-token=${CIRCLE_API_USER_TOKEN}
             done
